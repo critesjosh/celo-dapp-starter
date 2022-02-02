@@ -17,7 +17,6 @@ import {
   Card,
   Space,
   Input,
-  Button,
   notification,
   Form,
   Col,
@@ -26,6 +25,11 @@ import {
   Tabs,
 } from "antd";
 import "antd/dist/antd.css";
+
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import WalletModal from "../components/WalletModal"
 
 const { TabPane } = Tabs;
 
@@ -71,7 +75,7 @@ export default function App() {
               <p>Account address: {accountData.address}</p>
               <p>Connected to {networkData.chain?.name}</p>
               <p>Connected via {accountData.connector.name}</p>
-              <Button onClick={disconnect}>Disconnect</Button>
+              <button onClick={disconnect}>Disconnect</button>
             </Card>
 
             {/* Contracts info Card */}
@@ -82,23 +86,9 @@ export default function App() {
     );
   }
 
-  // If no account data is detected, show the buttons to connect a wallet
+  // If no account data is detected, show the button to connect a wallet
   return (
-    <Row justify="space-around" align="middle" style={{ height: "300px" }}>
-      <Col span={6}>
-        <Space wrap>
-          {connectData.connectors.map((x) => (
-            <Button type="primary" key={x.id} onClick={() => connect(x)}>
-              {x.name}
-              {!x.ready && " (unsupported)"}
-            </Button>
-          ))}
-          {connectError && (
-            <div>{connectError?.message ?? "Failed to connect"}</div>
-          )}
-        </Space>
-      </Col>
-    </Row>
+    <WalletModal/>
   );
 }
 
@@ -137,10 +127,10 @@ const StorageContract = (props) => {
 
   console.log("signer data", data?.provider?.provider.http);
 
-  useEffect(() => {
+  // useEffect(() => {
     // set the stored number to the latest Graph query result
     // setNumber(queryData?.updates[0].number);
-  }, [queryData]);
+  // }, [queryData]);
 
   // Init the storage contract with the props info and the Signer
   const contract = useContract({
@@ -184,7 +174,7 @@ const StorageContract = (props) => {
       <h2>Storage Contract</h2>
       <p>Contract Address: {contract.address}</p>
       <p>Contract number: {number}</p>
-      <Button onClick={retrieve}>Retrieve number</Button>
+      <button onClick={retrieve}>Retrieve number</button>
       <Form
         name="basic"
         labelCol={{ span: 8 }}
@@ -203,9 +193,9 @@ const StorageContract = (props) => {
           <Input placeholder="Set new storage value"></Input>
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <button type="primary" htmlType="submit">
             Set Storage
-          </Button>
+          </button>
         </Form.Item>
       </Form>
     </Space>
@@ -254,7 +244,7 @@ const GreeterContract = (props) => {
       <h2>Greeter Contract</h2>
       <p>Contract Address: {contract.address}</p>
       <p>Contract greeting: {greeting}</p>
-      <Button onClick={greet}>Retrieve greeting</Button>
+      <button onClick={greet}>Retrieve greeting</button>
       <Form
         name="basic"
         labelCol={{ span: 8 }}
@@ -271,9 +261,9 @@ const GreeterContract = (props) => {
           <Input placeholder="Set new greeting"></Input>
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <button type="primary" htmlType="submit">
             Set Greeting
-          </Button>
+          </button>
         </Form.Item>
       </Form>
     </Space>
