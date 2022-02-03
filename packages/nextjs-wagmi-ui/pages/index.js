@@ -6,11 +6,9 @@ import {
   useAccount,
   useConnect,
   useNetwork,
-  useBlockNumber,
   useContract,
-  useContractRead,
-  useContractWrite,
   useSigner,
+  useProvider
 } from "wagmi";
 
 import {
@@ -57,6 +55,9 @@ export default function App() {
   const [{ data: accountData }, disconnect] = useAccount();
   const [{ data: networkData, error: networkError, loading }, switchNetwork] =
     useNetwork();
+    const provider = useProvider()
+
+    console.log('provider', provider)
 
   // Get the contract data for the appropriate network
   const contracts =
@@ -125,7 +126,7 @@ const StorageContract = (props) => {
 
   console.log(queryData, queryError);
 
-  console.log("signer data", data?.provider?.provider.http);
+  console.log("signer data", data?.provider);
 
   // useEffect(() => {
     // set the stored number to the latest Graph query result
@@ -141,6 +142,8 @@ const StorageContract = (props) => {
 
   // This function is called with the "Retrieve number" button is clicked
   const retrieve = async () => {
+    let signer = await getSigner()
+    console.log('r signer', signer)
     const number = (await contract.retrieve()).toString();
     setNumber(number);
     notification.open({

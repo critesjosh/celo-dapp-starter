@@ -1,6 +1,6 @@
 import "../styles/globals.css";
 import { Provider, Connector } from "wagmi";
-import { getNetwork } from "@ethersproject/providers";
+import { getNetwork, JsonRpcProvider } from "@ethersproject/providers";
 import { Celo, Alfajores, Localhost } from "../utils/constants.ts";
 import { InjectedConnector } from "wagmi/connectors/injected";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
@@ -19,9 +19,8 @@ const defaultChain = Alfajores;
 
 const connectors = ({ chainId }) => {
   const network = getNetwork(chainId ?? defaultChain.id);
-  console.log(chainId, network);
 
-  const rpcUrl = rpcMap[chainId];
+  const rpcUrl = rpcMap[network.chainId];
   return [
     new InjectedConnector({ chains }),
     new WalletConnectConnector({
@@ -29,12 +28,19 @@ const connectors = ({ chainId }) => {
       options: {
         qrcode: true,
         rpc: {
-          [`${chainId}`]: rpcUrl,
+          44787: "https://alfajores-forno.celo-testnet.org",
+          42220: "https://forno.celo.org",
         },
       },
     }),
   ];
 };
+
+const provider = ({ chainId }) => {
+  const network = getNetwork(chainId ?? defaultChain.id);
+  const rpcUrl = rpcMap[network.chainId];
+  return new JsonRpcProvider(rpcUrl)
+}
 
 function MyApp({ Component, pageProps }) {
   return (
