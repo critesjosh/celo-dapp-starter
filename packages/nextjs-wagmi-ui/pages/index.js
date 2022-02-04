@@ -1,17 +1,6 @@
 import { useEffect, useState } from "react";
-
-import {
-  Provider,
-  chain,
-  useAccount,
-  useConnect,
-  useNetwork,
-  useBlockNumber,
-  useContract,
-  useContractRead,
-  useContractWrite,
-  useSigner,
-} from "wagmi";
+import { useEtherBalance, useEthers, Config } from "@usedapp/core";
+import { formatEther } from "@ethersproject/units";
 
 import {
   Card,
@@ -26,6 +15,8 @@ import {
   Tabs,
 } from "antd";
 import "antd/dist/antd.css";
+
+import { Web3ModalButton } from "../components/Web3ModalButton";
 
 const { TabPane } = Tabs;
 
@@ -48,57 +39,24 @@ const QUERY = gql`
 `;
 
 export default function App() {
-  const [{ data: connectData, error: connectError, connectLoading }, connect] =
-    useConnect();
-  const [{ data: accountData }, disconnect] = useAccount();
-  const [{ data: networkData, error: networkError, loading }, switchNetwork] =
-    useNetwork();
-
   // Get the contract data for the appropriate network
-  const contracts =
-    deployedContracts[networkData?.chain?.id?.toString()]?.[
-      networkData?.chain?.name?.toLocaleLowerCase()
-    ].contracts;
+  // const contracts =
+  //   deployedContracts[networkData?.chain?.id?.toString()]?.[
+  //     networkData?.chain?.name?.toLocaleLowerCase()
+  //   ].contracts;
 
   // Show the current connected Account and Network info
-  if (accountData) {
-    return (
-      <Row justify="space-around" align="middle" style={{ height: "300px" }}>
-        <Col span={16}>
-          <Space wrap size="small">
-            {/* Account info Card */}
-            <Card title="Connection Info">
-              <p>Account address: {accountData.address}</p>
-              <p>Connected to {networkData.chain?.name}</p>
-              <p>Connected via {accountData.connector.name}</p>
-              <Button onClick={disconnect}>Disconnect</Button>
-            </Card>
 
-            {/* Contracts info Card */}
-            {contracts && <Contracts contracts={contracts} />}
-          </Space>
-        </Col>
-      </Row>
-    );
-  }
-
-  // If no account data is detected, show the buttons to connect a wallet
+  const { activateBrowserWallet, account } = useEthers();
+  const etherBalance = useEtherBalance(account);
   return (
-    <Row justify="space-around" align="middle" style={{ height: "300px" }}>
-      <Col span={6}>
-        <Space wrap>
-          {connectData.connectors.map((x) => (
-            <Button type="primary" key={x.id} onClick={() => connect(x)}>
-              {x.name}
-              {!x.ready && " (unsupported)"}
-            </Button>
-          ))}
-          {connectError && (
-            <div>{connectError?.message ?? "Failed to connect"}</div>
-          )}
-        </Space>
-      </Col>
-    </Row>
+    <div>
+      <div>
+        <Web3ModalButton />
+      </div>
+      {account && <p>Account: {account}</p>}
+      {etherBalance && <p>Balance: {formatEther(etherBalance)}</p>}
+    </div>
   );
 }
 
@@ -123,12 +81,11 @@ const Contracts = (props) => {
 // The Storage contract UI
 
 const StorageContract = (props) => {
-  
-  // use the Signer to send transactions 
+  // use the Signer to send transactions
   const [{ data, error, loading }, getSigner] = useSigner();
   const [number, setNumber] = useState();
 
-  // Query the Graph endpoing specified in ../apollo-client.js 
+  // Query the Graph endpoing specified in ../apollo-client.js
   const { data: queryData, error: queryError } = useQuery(QUERY, {
     pollInterval: 2500,
   });
