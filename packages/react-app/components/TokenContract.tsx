@@ -109,15 +109,6 @@ export function TokenContract({ contractData }) {
     }
   };
 
-  //   const getStorage = async () => {
-  //     try {
-  //       const result = await contract.methods.retrieve().call();
-  //       setTokenValue(result);
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   };
-
   const getTokenName = async () => {
     const tokenName = await contract.methods.name().call();
     setTokenName(tokenName);
@@ -129,13 +120,13 @@ export function TokenContract({ contractData }) {
   };
 
   const getTokenInitialSupply = async () => {
-    const tokenInitialSupply = await contract.methods.initialSupply.call();
-    console.log(tokenInitialSupply);
-    // const convertedInitialSupply = ethers.utils.formatUnits(
-    //   tokenInitialSupply.toString(),
-    //   18
-    // );
-    // setTokenInitialSupply(convertedInitialSupply);
+    const tokenInitialSupply = await contract.methods
+      .initialSupply()
+      .call()
+      .then((result) => {
+        return ethers.utils.formatUnits(result, 18);
+      });
+    setTokenInitialSupply(tokenInitialSupply);
   };
 
   const getTokenDecimals = async () => {
@@ -150,35 +141,32 @@ export function TokenContract({ contractData }) {
   };
 
   const getBalance = async () => {
-    const tokenBalance = await contract.methods.balance.call();
-    console.log(tokenBalance);
-    // const convertedBalance = ethers.utils.formatUnits(
-    //   tokenBalance.toString(),
-    //   18
-    // );
-    // setTokenBalance(convertedBalance);
+    const tokenBalance = await contract.methods
+      .balance()
+      .call()
+      .then((result) => {
+        return ethers.utils.formatUnits(result, 18);
+      });
+    setTokenBalance(tokenBalance);
   };
 
   const getTokenBalanceOf = async (e) => {
     e.preventDefault();
     console.log(address);
-    const tokenBalanceOf = await contract.methods.balanceOf.call(address);
-    // const convertedTokenBalanceOf = ethers.utils.formatUnits(
-    //   tokenBalanceOf.toString(),
-    //   18
-    // );
-    // setTokenBalanceOf(convertedTokenBalanceOf);
+    const tokenBalanceOf = await contract.methods
+      .balanceOf(address)
+      .call()
+      .then((result) => {
+        return ethers.utils.formatUnits(result, 18);
+      });
+    setTokenBalanceOf(tokenBalanceOf);
   };
 
   const transferTokens = async (e) => {
     e.preventDefault();
-    if (newAddress && tokenTransferValue) {
-      console.log(newAddress, tokenTransferValue);
-    }
-    let tx = await contract.methods.call.transfer(
-      newAddress,
-      tokenTransferValue
-    );
+    let tx = await contract.methods
+      .transfer(newAddress, tokenTransferValue)
+      .call();
     let receipt = await tx.wait();
     console.log("receipt", receipt);
   };
@@ -189,9 +177,9 @@ export function TokenContract({ contractData }) {
         <Typography gutterBottom variant="h5" component="div">
           Token Contract
         </Typography>
-        {/* <Typography variant="h5" component="div">
-          Token Contract:
-        </Typography> */}
+        <Typography variant="body2" color="text.secondary">
+          Create and manage your own token on Celo.
+        </Typography>
         {contractData ? (
           <Link href={contractLink} target="_blank" component="div">
             {truncateAddress(contractData?.address)}
@@ -203,286 +191,298 @@ export function TokenContract({ contractData }) {
         )}
 
         {/* Token Name */}
-
-        <Card sx={{ minWidth: 275 }}>
-          <CardContent>
-            <HomeIcon style={iconStyle} color="primary" />
-            <Typography gutterBottom variant="h5" component="div">
-              Token Name
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Reads the name of the deployed token.
-            </Typography>
-            <Button
-              style={buttonStyle}
-              onClick={getTokenName}
-              size="large"
-              variant="contained"
-            >
-              Submit
-            </Button>
-            <Button
-              style={buttonStyle}
-              size="large"
-              href="https://docs.celo.org/"
-              target="_blank"
-            >
-              Learn More
-            </Button>
-            <Typography variant="body2" color="text.secondary">
-              <b>Name:</b> {tokenName}
-            </Typography>
-          </CardContent>
-        </Card>
+        <Box pt={2}>
+          <Card sx={{ minWidth: 275 }}>
+            <CardContent>
+              {/* <HomeIcon style={iconStyle} color="primary" /> */}
+              <Typography gutterBottom variant="h5" component="div">
+                Token Name
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Reads the name of the deployed token.
+              </Typography>
+              <Button
+                style={buttonStyle}
+                onClick={getTokenName}
+                size="large"
+                variant="contained"
+              >
+                Submit
+              </Button>
+              {/* <Button
+                style={buttonStyle}
+                size="large"
+                href="https://docs.celo.org/"
+                target="_blank"
+              >
+                Learn More
+              </Button> */}
+              <Typography variant="body2" color="text.secondary">
+                <b>Name:</b> {tokenName}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
 
         {/* Token Symbol */}
-
-        <Card sx={{ minWidth: 275 }}>
-          <CardContent>
-            <HomeIcon style={iconStyle} color="primary" />
-            <Typography gutterBottom variant="h5" component="div">
-              Token Symbol
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Reads the symbol of the deployed token.
-            </Typography>
-            <Button
-              style={buttonStyle}
-              variant="contained"
-              onClick={getTokenSymbol}
-              size="large"
-            >
-              Submit
-            </Button>
-            <Button
-              href="https://docs.celo.org/"
-              target="_blank"
-              size="large"
-              style={buttonStyle}
-            >
-              Learn More
-            </Button>
-            <Typography variant="body2" color="text.secondary">
-              <b>Symbol:</b> {tokenSymbol}
-            </Typography>
-          </CardContent>
-        </Card>
+        <Box pt={1}>
+          <Card sx={{ minWidth: 275 }}>
+            <CardContent>
+              {/* <HomeIcon style={iconStyle} color="primary" /> */}
+              <Typography gutterBottom variant="h5" component="div">
+                Token Symbol
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Reads the symbol of the deployed token.
+              </Typography>
+              <Button
+                style={buttonStyle}
+                variant="contained"
+                onClick={getTokenSymbol}
+                size="large"
+              >
+                Submit
+              </Button>
+              {/* <Button
+                href="https://docs.celo.org/"
+                target="_blank"
+                size="large"
+                style={buttonStyle}
+              >
+                Learn More
+              </Button> */}
+              <Typography variant="body2" color="text.secondary">
+                <b>Symbol:</b> {tokenSymbol}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
 
         {/* Total Tokens */}
-
-        <Card sx={{ minWidth: 275 }}>
-          <CardContent>
-            <HomeIcon style={iconStyle} color="primary" />
-            <Typography gutterBottom variant="h5" component="div">
-              Total Tokens
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Reads the total number of tokens in the supply.
-            </Typography>
-            <Button
-              style={buttonStyle}
-              onClick={getTokenTotal}
-              size="large"
-              variant="contained"
-            >
-              Submit
-            </Button>
-            <Button
-              style={buttonStyle}
-              size="small"
-              href="https://docs.celo.org/"
-              target="_blank"
-            >
-              Learn More
-            </Button>
-            <Typography variant="body2" color="text.secondary">
-              <b>Total:</b> {tokenTotal}
-            </Typography>
-          </CardContent>
-        </Card>
+        <Box pt={1}>
+          <Card sx={{ minWidth: 275 }}>
+            <CardContent>
+              {/* <HomeIcon style={iconStyle} color="primary" /> */}
+              <Typography gutterBottom variant="h5" component="div">
+                Total Tokens
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Reads the total number of tokens in the supply.
+              </Typography>
+              <Button
+                style={buttonStyle}
+                onClick={getTokenTotal}
+                size="large"
+                variant="contained"
+              >
+                Submit
+              </Button>
+              {/* <Button
+                style={buttonStyle}
+                size="small"
+                href="https://docs.celo.org/"
+                target="_blank"
+              >
+                Learn More
+              </Button> */}
+              <Typography variant="body2" color="text.secondary">
+                <b>Total:</b> {tokenTotal}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
 
         {/* Token Decimals */}
-
-        <Card sx={{ minWidth: 275 }}>
-          <CardContent>
-            <HomeIcon style={iconStyle} color="primary" />
-            <Typography gutterBottom variant="h5" component="div">
-              Token Decimals
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Reads the number of decimals of the deployed token.
-            </Typography>
-            <Button
-              style={buttonStyle}
-              onClick={getTokenDecimals}
-              size="large"
-              variant="contained"
-            >
-              Submit
-            </Button>
-            <Button
-              style={buttonStyle}
-              size="large"
-              href="https://docs.celo.org/"
-              target="_blank"
-            >
-              Learn More
-            </Button>
-            <Typography variant="body2" color="text.secondary">
-              <b>Decimals:</b> {tokenDecimals}
-            </Typography>
-          </CardContent>
-        </Card>
+        <Box pt={1}>
+          <Card sx={{ minWidth: 275 }}>
+            <CardContent>
+              {/* <HomeIcon style={iconStyle} color="primary" /> */}
+              <Typography gutterBottom variant="h5" component="div">
+                Token Decimals
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Reads the number of decimals of the deployed token.
+              </Typography>
+              <Button
+                style={buttonStyle}
+                onClick={getTokenDecimals}
+                size="large"
+                variant="contained"
+              >
+                Submit
+              </Button>
+              {/* <Button
+                style={buttonStyle}
+                size="large"
+                href="https://docs.celo.org/"
+                target="_blank"
+              >
+                Learn More
+              </Button> */}
+              <Typography variant="body2" color="text.secondary">
+                <b>Decimals:</b> {tokenDecimals}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
 
         {/* Initial Supply */}
-
-        <Card sx={{ minWidth: 275 }}>
-          <CardContent>
-            <HomeIcon style={iconStyle} color="primary" />
-            <Typography gutterBottom variant="h5" component="div">
-              Initial Supply
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Reads the initial supply of the deployed token.
-            </Typography>
-            <Button
-              onClick={getTokenInitialSupply}
-              size="large"
-              style={buttonStyle}
-              variant="contained"
-            >
-              Submit
-            </Button>
-            <Button
-              size="large"
-              style={buttonStyle}
-              href="https://docs.celo.org/"
-              target="_blank"
-            >
-              Learn More
-            </Button>
-            <Typography variant="body2" color="text.secondary">
-              <b>Initial Supply:</b> {tokenInitialSupply}
-            </Typography>
-          </CardContent>
-        </Card>
+        <Box pt={1}>
+          <Card sx={{ minWidth: 275 }}>
+            <CardContent>
+              {/* <HomeIcon style={iconStyle} color="primary" /> */}
+              <Typography gutterBottom variant="h5" component="div">
+                Initial Supply
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Reads the initial supply of the deployed token.
+              </Typography>
+              <Button
+                onClick={getTokenInitialSupply}
+                size="large"
+                style={buttonStyle}
+                variant="contained"
+              >
+                Submit
+              </Button>
+              {/* <Button
+                size="large"
+                style={buttonStyle}
+                href="https://docs.celo.org/"
+                target="_blank"
+              >
+                Learn More
+              </Button> */}
+              <Typography variant="body2" color="text.secondary">
+                <b>Initial Supply:</b> {tokenInitialSupply}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
 
         {/* Current Balance */}
-
-        <Card sx={{ minWidth: 275 }}>
-          <CardContent>
-            <HomeIcon style={iconStyle} color="primary" />
-            <Typography gutterBottom variant="h5" component="div">
-              Current Balance
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Reads the total balance of the calling address.
-            </Typography>
-            <Button
-              style={buttonStyle}
-              onClick={getBalance}
-              size="large"
-              variant="contained"
-            >
-              Submit
-            </Button>
-            <Button size="large" href="https://docs.celo.org/" target="_blank">
-              Learn More
-            </Button>
-            <Typography variant="body2" color="text.secondary">
-              <b>Current Balance:</b> {tokenBalance}
-            </Typography>
-          </CardContent>
-        </Card>
+        <Box pt={1}>
+          <Card sx={{ minWidth: 275 }}>
+            <CardContent>
+              {/* <HomeIcon style={iconStyle} color="primary" /> */}
+              <Typography gutterBottom variant="h5" component="div">
+                Token Balance
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Reads the total balance of the calling address.
+              </Typography>
+              <Button
+                style={buttonStyle}
+                onClick={getBalance}
+                size="large"
+                variant="contained"
+              >
+                Submit
+              </Button>
+              {/* <Button
+                size="large"
+                href="https://docs.celo.org/"
+                target="_blank"
+              >
+                Learn More
+              </Button> */}
+              <Typography variant="body2" color="text.secondary">
+                <b>Token Balance:</b> {tokenBalance}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
 
         {/* Address Balance */}
-
-        <Card sx={{ minWidth: 275 }}>
-          <CardContent>
-            <HomeIcon style={iconStyle} color="primary" />
-            <Typography gutterBottom variant="h5" component="div">
-              Address Balance
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Reads the balance of the given address.
-            </Typography>
-            <form noValidate autoComplete="off" onSubmit={getTokenBalanceOf}>
-              <TextField
-                onChange={(e) => setNewAddress(e.target.value)}
-                label="Address"
-                fullWidth
-                required
-                margin="normal"
-                variant="standard"
-              />
-              <Button
-                style={buttonStyle}
-                variant="contained"
-                type="submit"
-                size="large"
-              >
-                Submit
-              </Button>
-              <Button
-                size="large"
-                href="https://docs.celo.org/"
-                target="_blank"
-              >
-                Learn More
-              </Button>
-            </form>
-            <Typography variant="body2" color="text.secondary">
-              <b>Address balance:</b> {tokenBalanceOf}
-            </Typography>
-          </CardContent>
-        </Card>
+        <Box pt={1}>
+          <Card sx={{ minWidth: 275 }}>
+            <CardContent>
+              {/* <HomeIcon style={iconStyle} color="primary" /> */}
+              <Typography gutterBottom variant="h5" component="div">
+                Address Balance
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Reads the balance of the given address.
+              </Typography>
+              <form noValidate autoComplete="off" onSubmit={getTokenBalanceOf}>
+                <TextField
+                  onChange={(e) => setNewAddress(e.target.value)}
+                  label="Address"
+                  fullWidth
+                  required
+                  margin="normal"
+                  variant="standard"
+                />
+                <Button
+                  style={buttonStyle}
+                  variant="contained"
+                  type="submit"
+                  size="large"
+                >
+                  Submit
+                </Button>
+                {/* <Button
+                  size="large"
+                  href="https://docs.celo.org/"
+                  target="_blank"
+                >
+                  Learn More
+                </Button> */}
+              </form>
+              <Typography variant="body2" color="text.secondary">
+                <b>Address balance:</b> {tokenBalanceOf}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
 
         {/* Transfer */}
-
-        <Card sx={{ minWidth: 275 }}>
-          <CardContent>
-            <HomeIcon style={iconStyle} color="primary" />
-            <Typography gutterBottom variant="h5" component="div">
-              Transfer Balance
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Transfers value from one address to another.
-            </Typography>
-            <form noValidate autoComplete="off" onSubmit={transferTokens}>
-              <TextField
-                onChange={(e) => setNewAddress(e.target.value)}
-                label="Address"
-                fullWidth
-                required
-                margin="normal"
-                variant="standard"
-              />
-              <TextField
-                onChange={(e) => setTokenTransferValue(e.target.value)}
-                label="Value"
-                fullWidth
-                required
-                margin="normal"
-                variant="standard"
-              />
-              <Button
-                style={buttonStyle}
-                variant="contained"
-                type="submit"
-                size="large"
-              >
-                Submit
-              </Button>
-              <Button
-                size="large"
-                href="https://docs.celo.org/"
-                target="_blank"
-              >
-                Learn More
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        <Box pt={1}>
+          <Card sx={{ minWidth: 275 }}>
+            <CardContent>
+              {/* <HomeIcon style={iconStyle} color="primary" /> */}
+              <Typography gutterBottom variant="h5" component="div">
+                Transfer Balance
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Transfers value from one address to another.
+              </Typography>
+              <form noValidate autoComplete="off" onSubmit={transferTokens}>
+                <TextField
+                  onChange={(e) => setNewAddress(e.target.value)}
+                  label="Address"
+                  fullWidth
+                  required
+                  margin="normal"
+                  variant="standard"
+                />
+                <TextField
+                  onChange={(e) => setTokenTransferValue(e.target.value)}
+                  label="Value"
+                  fullWidth
+                  required
+                  margin="normal"
+                  variant="standard"
+                />
+                <Button
+                  style={buttonStyle}
+                  variant="contained"
+                  type="submit"
+                  size="large"
+                >
+                  Submit
+                </Button>
+                {/* <Button
+                  size="large"
+                  href="https://docs.celo.org/"
+                  target="_blank"
+                >
+                  Learn More
+                </Button> */}
+              </form>
+            </CardContent>
+          </Card>
+        </Box>
       </Grid>
     </Grid>
   );
