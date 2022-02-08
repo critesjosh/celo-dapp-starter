@@ -7,7 +7,12 @@ import Box from "@mui/material/Box";
 import deployedContracts from "../../hardhat/deployments/hardhat_contracts.json";
 import { useContractKit } from "@celo-tools/use-contractkit";
 
-import { StorageContract, GreeterContract, ButtonAppBar } from "../components";
+import {
+  StorageContract,
+  GreeterContract,
+  TokenContract,
+  ButtonAppBar,
+} from "../components";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -40,6 +45,7 @@ export default function App() {
           >
             <Tab label="Storage Contract" {...a11yProps(0)} />
             <Tab label="Greeter Contract" {...a11yProps(1)} />
+            <Tab label="Token Contract" {...a11yProps(2)} />
           </Tabs>
         </Box>
         <TabPanel value={value} index={0}>
@@ -47,6 +53,9 @@ export default function App() {
         </TabPanel>
         <TabPanel value={value} index={1}>
           <GreeterContract contractData={contracts?.Greeter} />
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <TokenContract contractData={contracts?.Token} />
         </TabPanel>
       </Box>
     </div>
